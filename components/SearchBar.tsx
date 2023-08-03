@@ -30,7 +30,7 @@ const SearchBar: React.ForwardRefRenderFunction<SearchHandle, SearchProps> = (
         <input
           key="search-bar"
           className={SearchBarStyle.searchBar}
-          placeholder={"search"}
+          placeholder={"Search"}
           ref={inputRef}
         />
         <img

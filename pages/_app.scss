@@ -1,0 +1,35 @@
+.page-name-high {
+  margin-left: 30px;
+  font-size: 30px;
+}
+.page-name-high {
+  text-transform: uppercase;
+  font-family: "Gambetta", serif;
+  letter-spacing: -1px;
+  transition: 700ms ease;
+  font-variation-settings: "wght" 311;
+  margin-bottom: 0.8rem;
+  color: #2d3436;
+  outline: none;
+}
+
+.page-name-high:hover {
+  font-variation-settings: "wght" 582;
+  letter-spacing: 1px;
+}
+.demo-logo-vertical {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #ff7979;
+  padding-bottom: 30px;
+  padding-top: -10px;
+}
+.demo-logo-vertical-log {
+  font-size: 64px;
+}
+.demo-logo-vertical-text {
+  font-weight: 800;
+}

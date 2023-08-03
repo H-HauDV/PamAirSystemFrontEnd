@@ -1,40 +1,180 @@
 import {
   useState,
-  useCallback,
+  useEffect,
   memo,
   useRef,
   useImperativeHandle,
   forwardRef,
 } from "react";
 import LocationListStyle from "../public/style/LocationList.module.css";
+import { Dropdown, Space, Typography } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import type { MenuProps } from "antd";
+import { Table } from "antd";
+import { FundTwoTone, EnvironmentTwoTone } from "@ant-design/icons";
+
 import { HaNoiLocationList } from "../lib/HaNoiLocationList";
+import type { TableColumnsType } from "antd";
 import { HoChiMinhLocationList } from "../lib/HoChiMinhLocationList";
 import APIHoChiMinhLocationList from "../lib/APIHoChiMinhLocationList";
 import APIHaNoiLocationList from "../lib/APIHanoiLocationList";
 import { LocationCard } from "../lib/LocationCard";
-const backEndLocationListHAN = [];
-const backEndLocationListHCM = [];
+
 //promise any on the backend can not be extract by any other method than maps
-APIHaNoiLocationList().then((res) =>
-  res.map((items) => {
-    backEndLocationListHAN.push(items);
-  })
-);
-APIHoChiMinhLocationList().then((res) =>
-  res.map((items) => {
-    backEndLocationListHCM.push(items);
-  })
-);
+
+interface Record {
+  MaTram: number;
+  TenTram: string;
+  lati: number;
+  lang: number;
+  location: string;
+  mdape: number;
+}
+
+interface GroupedRecord {
+  location: string;
+  mdape: number;
+  records: Record[];
+}
+
+interface Props {
+  data: GroupedRecord[];
+}
+
+const columns = [
+  {
+    title: (
+      <div className={LocationListStyle.LocationListHeaderText}>
+        <EnvironmentTwoTone
+          className={LocationListStyle.LocationListHeaderIcon}
+        />
+        Location
+      </div>
+    ),
+    dataIndex: "location",
+    key: "location",
+    className: LocationListStyle.LocationListLoca,
+  },
+  {
+    title: (
+      <div className={LocationListStyle.LocationListHeaderText}>
+        <FundTwoTone className={LocationListStyle.LocationListHeaderIcon} />
+        MDAPE
+      </div>
+    ),
+    dataIndex: "mdape",
+    key: "mdape",
+    className: LocationListStyle.LocationListMDAPE,
+  },
+];
+
+const expandedRowRender = (record: GroupedRecord) => {
+  const columns = [
+    {
+      title: "Mã trạm",
+      dataIndex: "Ma tram",
+      key: "Ma tram",
+    },
+    {
+      title: "Tên trạm",
+      dataIndex: "Ten tram",
+      key: "Ten tram",
+    },
+    {
+      title: "lat",
+      dataIndex: "lat",
+      key: "lat",
+    },
+    {
+      title: "lon",
+      dataIndex: "lon",
+      key: "lon",
+    },
+  ];
+
+  return (
+    <Table columns={columns} dataSource={record.records} pagination={false} />
+  );
+};
+
 function LocationList(props: { onClick: (e) => void }, ref) {
   const addingCardRef = useRef<HTMLInputElement>();
   const [ListState, setListState] = useState("Ha Noi");
   const [cardListState, setCardListState] = useState(HaNoiLocationList);
+
+  const [dataHNAVG, setDataHNAVG] = useState();
+  const [dataHNMax, setDataHNMax] = useState({ mdape: 0, location: "null" });
+  const [dataHNMin, setDataHNMin] = useState({ mdape: 0, location: "null" });
+
+  const [dataHCMAVG, setDataHCMAVG] = useState();
+  const [dataHCMMax, setDataHCMMax] = useState({ mdape: 0, location: "null" });
+  const [dataHCMMin, setDataHCMMin] = useState({ mdape: 0, location: "null" });
+
   const numberRef = useRef<HTMLInputElement>();
   const nameRef = useRef<HTMLInputElement>();
   const districtRef = useRef<HTMLInputElement>();
   const latRef = useRef<HTMLInputElement>();
   const lngRef = useRef<HTMLInputElement>();
 
+  const [backEndLocationListHCM, setBackEndLocationListHCM] = useState<
+    GroupedRecord[]
+  >([]);
+  const [backEndLocationListHN, setBackEndLocationListHN] = useState<
+    GroupedRecord[]
+  >([]);
+  useEffect(() => {
+    APIHaNoiLocationList().then((res) => {
+      setDataHNAVG(res["average mdape"]);
+      setDataHNMax(res.max);
+      setDataHNMin(res.min);
+
+      const data = res.data;
+      const groupedData = data.reduce((acc, record) => {
+        const existingGroup = acc.find(
+          (group) => group.location === record.location
+        );
+        if (existingGroup) {
+          existingGroup.records.push(record);
+        } else {
+          acc.push({
+            location: record.location,
+            mdape: record.mdape,
+            records: [record],
+          });
+        }
+        return acc;
+      }, []);
+      console.log("setBackEndLocationListHN");
+      console.log(res);
+      setBackEndLocationListHN(groupedData);
+    });
+
+    APIHoChiMinhLocationList().then((res) => {
+      setDataHCMAVG(res["average mdape"]);
+      setDataHCMMax(res.max);
+      setDataHCMMin(res.min);
+
+      const data = res.data;
+      const groupedData = data.reduce((acc, record) => {
+        const existingGroup = acc.find(
+          (group) => group.location === record.location
+        );
+        if (existingGroup) {
+          existingGroup.records.push(record);
+        } else {
+          acc.push({
+            location: record.location,
+            mdape: record.mdape,
+            records: [record],
+          });
+        }
+        return acc;
+      }, []);
+      console.log("setBackEndLocationListHCM");
+      console.log(res);
+      setBackEndLocationListHCM(groupedData);
+    });
+  }, []);
   const checkListState = () => {
     if (ListState === "Ha Noi") {
       setListState("Ho Chi Minh");
@@ -60,158 +200,74 @@ function LocationList(props: { onClick: (e) => void }, ref) {
       );
     });
   };
+  const itemsCity = [
+    {
+      key: "Ha Noi",
+      label: "Ha Noi",
+    },
+    {
+      key: "Ho Chi Minh",
+      label: "Ho Chi Minh",
+    },
+  ];
+  function handleCitySelect({ key }) {
+    setListState(key);
+  }
   return (
     <div className={LocationListStyle.LocationList}>
-      <div
-        style={{
-          border: "2px solid black",
-          borderRadius: "5px",
-          padding: "0px",
-          position: "sticky",
-          top: "0",
-          backgroundColor: "black",
-          color: "beige",
+      <Dropdown
+        className={LocationListStyle.LocationListDrop}
+        menu={{
+          items: itemsCity,
+          selectable: true,
+          defaultSelectedKeys: ["1"],
+          onSelect: handleCitySelect,
         }}
       >
-        <div
-          onClick={() => checkListState()}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            width: "100%",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              width: "100%",
-              display: "flex",
-              justifyContent: "flex-start",
-            }}
-          >
-            <div>
-              <h4 style={{ margin: "0px" }}>abc:xyz</h4>
-              <h4 style={{ margin: "0px" }}>123:456</h4>
-            </div>
+        <Typography.Link>
+          <Space>
+            Select city
+            <DownOutlined />
+          </Space>
+        </Typography.Link>
+      </Dropdown>
+      <div className={LocationListStyle.LocationListRow}>
+        <div className={LocationListStyle.LocationListAvg}>
+          <div className={LocationListStyle.LocationListTitle}>Avg</div>
+          <div className={LocationListStyle.LocationListData}>
+            {ListState === "Ha Noi" ? dataHNAVG : dataHCMAVG}
           </div>
-          <h2>{ListState}</h2>
         </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-start",
-            border: "2px solid black",
-            borderRadius: "5px",
-            padding: "0px",
-            width: "100%",
-          }}
-        >
-          <h4
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "75px",
-              width: "120px",
-              border: "2px solid beige",
-              margin: "0px",
-              cursor: "pointer",
-            }}
-          >
-            Ma Tram
-          </h4>
-          <h4
-            style={{
-              display: "flex",
-              alignItems: "center",
-              height: "75px",
-              width: "200px",
-              border: "2px solid beige",
-              margin: "0px",
-              cursor: "pointer",
-            }}
-          >
-            Ten Tram
-          </h4>
-          <h4
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "75px",
-              width: "150px",
-              border: "2px solid beige",
-              margin: "0px",
-              cursor: "pointer",
-            }}
-          >
-            Ten Quan
-          </h4>
-          <h4
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-
-              height: "75px",
-              width: "150px",
-              border: "2px solid beige",
-              margin: "0px",
-              cursor: "pointer",
-            }}
-          >
-            Lat
-          </h4>
-          <h4
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "75px",
-              width: "150px",
-              border: "2px solid beige",
-              margin: "0px",
-              cursor: "pointer",
-            }}
-          >
-            Lng
-          </h4>
-          <h4
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "75px",
-              width: "150px",
-              border: "2px solid beige",
-              margin: "0px",
-              cursor: "pointer",
-            }}
-          ></h4>
+        <div className={LocationListStyle.LocationListHigh}>
+          <div className={LocationListStyle.LocationListTitle}>Max</div>
+          <div className={LocationListStyle.LocationListData}>
+            {ListState === "Ha Noi" ? dataHNMax.mdape : dataHCMMax.mdape}
+          </div>
+          <div className={LocationListStyle.LocationListDistrict}>
+            {ListState === "Ha Noi" ? dataHNMax.location : dataHCMMax.location}
+          </div>
+        </div>
+        <div className={LocationListStyle.LocationListLow}>
+          <div className={LocationListStyle.LocationListTitle}>Min</div>
+          <div className={LocationListStyle.LocationListData}>
+            {ListState === "Ha Noi" ? dataHNMin.mdape : dataHCMMin.mdape}
+          </div>
+          <div className={LocationListStyle.LocationListDistrict}>
+            {ListState === "Ha Noi" ? dataHNMin.location : dataHCMMin.location}
+          </div>
         </div>
       </div>
-
-      {ListState === "Ha Noi"
-        ? ListLocationCard(backEndLocationListHAN)
-        : ListLocationCard(backEndLocationListHCM)}
-
-      <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-        <h1
-          className={LocationListStyle.addButtonLocationList}
-          style={{
-            border: "2px solid black",
-            borderRadius: "100%",
-            width: "20px",
-            height: "20px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            cursor: "pointer",
-          }}
-        >
-          +
-        </h1>
-      </div>
+      <Table
+        className={LocationListStyle.LocationListTable}
+        columns={columns}
+        dataSource={
+          ListState === "Ha Noi"
+            ? backEndLocationListHN
+            : backEndLocationListHCM
+        }
+        bordered
+        expandable={{ expandedRowRender, defaultExpandAllRows: true }}
+      />
     </div>
   );
 }

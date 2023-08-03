@@ -1,21 +1,29 @@
 .searchBarContainer {
   display: flex;
-  width: 100vw;
   height: 50px;
-  padding-bottom: 10px;
-  padding-top: 10px;
+
+  padding-bottom: 7px;
+  padding-top: 7px;
   justify-content: center;
+  position: relative;
 }
 .searchBar {
-  width: 60%;
+  width: 95%;
   border-radius: 100px;
-  padding: 10px;
-  border: 2px solid black;
+  padding: 5px 0px 5px 10px;
+  margin: 5px 1px 3px 0px;
+  border: 1px solid #DDDDDD;
   font-size: 100%;
 }
-
+.searchBar:focus {
+  box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+  padding: 5px 0px 5px 9px;
+  margin: 5px 1px 3px 0px;
+  border: 1px solid rgba(81, 203, 238, 1);
+}
 .searchBarIcon {
-  transform: scale(0.7);
+  transform: scale(0.4);
   position: absolute;
-  margin-right: -57%;
+  margin-right: -90%;
+  margin-top: -0.55%;
 }

@@ -23,8 +23,8 @@ const DropDownMenu: React.ForwardRefRenderFunction<
   return (
     <div className={DropDownMenuStyle.dropdown}>
       <div className={DropDownMenuStyle.dropBox}>
-        <h3>Predict Model</h3>
-        <input placeholder={"select your state"} />
+        <div className={DropDownMenuStyle.dropBoxText}>Predict Model</div>
+        <input className={DropDownMenuStyle.dropBoxInput} placeholder={"Select your state"} />
       </div>
       <div className={DropDownMenuStyle.dropdownContent}>
         <a onClick={() => props.onClick("Hourly")}>Hourly</a>

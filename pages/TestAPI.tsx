@@ -1,4 +1,7 @@
 import { useState, useCallback, memo, useRef } from "react";
+import { Dropdown, Space, Typography } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import { MDBContainer, MDBBtn , MDBCol } from "mdbreact";
 import Map from "../lib/Map";
 import Nav from "../components/Nav";
 import ModalBox from "../components/ModalBox";
@@ -13,7 +16,7 @@ import normalface from "../img/normalface.png";
 import happyface from "../img/happyface.png";
 import veryhappyface from "../img/veryhappyface.png";
 import verysadface from "../img/verysadface.png";
-
+import type { MenuProps } from "antd";
 export default function TestAPI() {
   let [cityState, setCityState] = useState("");
   let [districtState, setDistrictState] = useState("");
@@ -26,6 +29,7 @@ export default function TestAPI() {
     "pm2.5": [],
     time: [],
   });
+
   const fetchTestAPIOnClick = async () => {
     if (modelState === "12 hours") {
       const res = await fetch("http://202.191.58.206/pamair/hourly", {
@@ -97,17 +101,12 @@ export default function TestAPI() {
       imgSrc = verysadface;
     }
     return (
-      <div style={{ display: "flex", marginBottom: "20px" }}>
-        <h3
-          style={{
-            width: "200px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
+      <div  className={styleTestAPI.styleCardDataContainer}>
+        <div
+          className={styleTestAPI.styleCardDataContainerTime}
         >
           {time}
-        </h3>
+        </div>
         <div
           style={{
             display: "flex",
@@ -280,81 +279,168 @@ export default function TestAPI() {
       </div>
     );
   };
+  const itemsCity = [
+    {
+      key: "Ha Noi",
+      label: "Ha Noi",
+    },
+    {
+      key: "Ho Chi Minh",
+      label: "Ho Chi Minh",
+    },
+  ];
 
+  const hanoiItems = HaNoiDistrict.map((district) => ({
+    key: district,
+    label: district,
+  }));
+
+  const hochiminhItems = HoChiMinhDistrict.map((district) => ({
+    key: district,
+    label: district,
+  }));
+
+  const itemsmodel = [
+    {
+      key: "12 hours",
+      label: "12 hours",
+    },
+    {
+      key: "3 days",
+      label: "3 days",
+    },
+  ];
+
+  function handleCitySelect({ key }) {
+    setDistrictState("");
+    setCityState(key);
+  }
+  function handleDistrictSelect({ key }) {
+    setDistrictState(key);
+  }
+  function handleModelSelect({ key }) {
+    setModelState(key);
+  }
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          marginTop: "-10px",
-        }}
-      >
-        <div style={{ display: "flex" }}>
-          <div>
-            <h3>City</h3>
-            {selectAPIMenu(["Ha Noi", "Ho Chi Minh"], "select city", "city")}
+      <div className={styleTestAPI.selectCityAndDistrict}>
+          <div className={styleTestAPI.selectCityAndDistrictLeft}>
+            <div className={styleTestAPI.selectCityAndDistrictLeftItems}>
+              <Dropdown
+                menu={{
+                  items: itemsCity,
+                  selectable: true,
+                  defaultSelectedKeys: ["1"],
+                  onSelect: handleCitySelect,
+                }}
+              >
+                <Typography.Link>
+                  <Space>
+                    Select city
+                    <DownOutlined />
+                  </Space>
+                </Typography.Link>
+              </Dropdown>
+              {/* <h3>City</h3>
+            {selectAPIMenu(["Ha Noi", "Ho Chi Minh"], "select city", "city")} */}
+            </div>
+            <div className={styleTestAPI.selectCityAndDistrictLeftItems}>
+              {cityState === "Ha Noi" ? (
+                <Dropdown
+                  menu={{
+                    items: hanoiItems,
+                    selectable: true,
+                    defaultSelectedKeys: [hanoiItems[0].key],
+                    onSelect: handleDistrictSelect,
+                  }}
+                >
+                  <Typography.Link>
+                    <Space>
+                      Select District
+                      <DownOutlined />
+                    </Space>
+                  </Typography.Link>
+                </Dropdown>
+              ) : (
+                <Dropdown
+                  menu={{
+                    items: hochiminhItems,
+                    selectable: true,
+                    defaultSelectedKeys: [hochiminhItems[0].key],
+                    onSelect: handleDistrictSelect,
+                  }}
+                >
+                  <Typography.Link>
+                    <Space>
+                      Select District
+                      <DownOutlined />
+                    </Space>
+                  </Typography.Link>
+                </Dropdown>
+              )}
+            </div>
+            <div className={styleTestAPI.selectCityAndDistrictLeftItems}>
+              <Dropdown
+                menu={{
+                  items: itemsmodel,
+                  selectable: true,
+                  defaultSelectedKeys: [itemsmodel[0].key],
+                  onSelect: handleModelSelect,
+                }}
+              >
+                <Typography.Link>
+                  <Space>
+                    Select Model
+                    <DownOutlined />
+                  </Space>
+                </Typography.Link>
+              </Dropdown>
+              {/* <h3>Model</h3>
+            {selectAPIMenu(["12 hours", "3 days"], "select model", "model")} */}
+            </div>
           </div>
-          <div>
-            <h3>District</h3>
-            {selectAPIMenu(
-              cityState === "Ha Noi" ? HaNoiDistrict : HoChiMinhDistrict,
-              "select district",
-              "district"
-            )}
-          </div>
-          <div>
-            <h3>Model</h3>
-            {selectAPIMenu(["12 hours", "3 days"], "select model", "model")}
-          </div>
-        </div>
-        <button
-          className={styleTestAPI.buttonAPIPredict}
-          onClick={() => {
-            setLoadingState("loading");
-            if (cardClickCheck === 1) {
-              setCardClickCheck(0);
-            } else if (cardClickCheck === 0) {
-              setCardClickCheck(0);
-            }
+          <div className={styleTestAPI.selectCityAndDistrictRight}>
+            <button
+              className={styleTestAPI.buttonAPIPredict}
+              onClick={() => {
+                setLoadingState("loading");
+                if (cardClickCheck === 1) {
+                  setCardClickCheck(0);
+                } else if (cardClickCheck === 0) {
+                  setCardClickCheck(0);
+                }
 
-            if (cityState && districtState && modelState) {
-              fetchTestAPIOnClick();
-            } else {
-              alert(`Error:please prompt city and district`);
-            }
-          }}
-        >
-          Get Predict Result
-        </button>
+                if (cityState && districtState && modelState) {
+                  fetchTestAPIOnClick();
+                } else {
+                  alert(`Error:please prompt city and district`);
+                }
+              }}
+            >
+              Get Predict Result
+            </button>
+        </div>
       </div>
       <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-start",
-          width: "100%",
-          marginTop: "50px",
-        }}
+        className={styleTestAPI.downPannelShowTextAndTable}
       >
-        <div>
-          <div style={{ marginLeft: "20px", width: "200px" }}>
-            <h1 style={{ backgroundColor: "gray", width: "120px" }}>
+        <div className={styleTestAPI.downPannelShowTextAndTableText}>
+          <div className={styleTestAPI.downPannelShowTextAndTableTextSmall}>
+            <div className={styleTestAPI.downPannelShowTextAndTableTextSmallLabel}>
               Location
-            </h1>
-            <h3>{cityState + "," + districtState}</h3>
+            </div>
+            <div className={styleTestAPI.downPannelShowTextAndTableTextSmallCont}>{cityState + "," + districtState}</div>
           </div>
-          <div style={{ marginLeft: "20px" }}>
-            <h1 style={{ backgroundColor: "gray", width: "120px" }}>Model</h1>
-            <h3>{modelState}</h3>
+          <div className={styleTestAPI.downPannelShowTextAndTableTextSmall}>
+            <div className={styleTestAPI.downPannelShowTextAndTableTextSmallLabel}>Model</div>
+            <div className={styleTestAPI.downPannelShowTextAndTableTextSmallCont}>{modelState}</div>
           </div>
         </div>
         <div
-          style={{
-            marginLeft: "150px",
-          }}
+          className={styleTestAPI.downPannelShowTextAndTableTable}
         >
-          <div style={{ display: "flex" }}>
-            <h3
+          <div className={styleTestAPI.downPannelShowTextAndTableTableHead}>
+            <div
               style={{
                 marginRight: "120px",
                 marginLeft: "20px",
@@ -362,19 +448,19 @@ export default function TestAPI() {
               }}
             >
               {modelState === "12 hours" ? "Hour" : "Day"}
-            </h3>
-            <h3>Pollution Level</h3>
+            </div>
+            <div>Pollution Level</div>
           </div>
           <div
             style={{
-              border: "2px solid rgba(0, 0, 0, 0.3)",
-              borderRadius: "15px",
+              border: "1px solid rgba(0, 0, 0, 0.3)",
+              borderRadius: "10px",
               height: "400px",
               padding: "10px",
               overflowY: "auto",
               overflowX: "hidden",
               display: "flex",
-              justifyContent: "center",
+              justifyContent: "start",
             }}
             className={styleTestAPI.TestAPICardContainer}
           >
@@ -400,7 +486,7 @@ export default function TestAPI() {
                 </div>
               </div>
             ) : (
-              <div>
+              <div className={styleTestAPI.styleCardDataGrowContainer}>
                 {dataAPI.time.map((item, index) => {
                   return predictCard(
                     dataAPI.time[index],

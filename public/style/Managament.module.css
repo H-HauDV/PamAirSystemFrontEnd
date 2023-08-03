@@ -14,3 +14,18 @@
     padding: 30px;
   }
 }
+.ManagementPageContainer{
+  display: flex;
+  flex-direction: column;
+}
+.LocationListContainer{
+
+}
+.LocationMapContainer{
+
+}
+.LocationMapContainerFilterPannel{
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  margin-bottom: 20px;
+}

@@ -5,16 +5,12 @@
   overflow: hidden;
   background-image: url(../../img/maps.jpg);
 
-  margin-top: -10px;
-  width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
 }
-img {
-  max-width: none !important;
+body{
+  margin: 0;
 }
 html {
-  display: flex;
-  overflow: hidden;
   justify-content: center;
   align-items: flex-start;
 }
