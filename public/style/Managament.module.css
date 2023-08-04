@@ -14,18 +14,56 @@
     padding: 30px;
   }
 }
-.ManagementPageContainer{
+.ManagementPageContainer {
   display: flex;
   flex-direction: column;
 }
-.LocationListContainer{
-
+.LocationListContainer {
 }
-.LocationMapContainer{
-
+.LocationMapContainer {
 }
-.LocationMapContainerFilterPannel{
+.LocationMapContainerFilterPannel {
   display: grid;
   grid-template-columns: 1fr 3fr;
   margin-bottom: 20px;
+}
+.LocationNewContainerNew {
+  border-top: 1px solid #7f8c8d;
+  padding-top: 30px;
+  margin: 0px 30px;
+  margin-top: 20px;
+}
+.LocationNewContainerNewHight {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 3fr;
+  align-items: center;
+}
+.LocationListTable {
+  margin-top: 30px;
+  border: 1px solid #7f8c8d;
+  border-radius: 5px;
+}
+.LocationListDrop {
+  padding-left: 5px;
+  font-size: 18px;
+}
+.LocationInput {
+  width: 100px;
+  height: 30px;
+}
+.LocationInputButton {
+  border-radius: 8px;
+  border: none;
+  height: 30px;
+  width: 100px;
+  background-color: #1cb0f6;
+  color: white;
+  transition: transform 0.3s ease-in-out;
+  font-weight: 600;
+}
+.LocationInputButton:hover {
+  transform: transform(0.9);
+}
+.LocationInpuError{
+  margin-top: 25px;
 }
