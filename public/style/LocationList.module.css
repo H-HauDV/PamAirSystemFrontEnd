@@ -1,7 +1,5 @@
 .LocationList {
   width: 100%;
-  border-top: 1px solid #7f8c8d;
-  margin-top: 10px;
   display: flex;
   flex-direction: column;
 }

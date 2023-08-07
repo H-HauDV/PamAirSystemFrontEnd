@@ -251,48 +251,7 @@ export default function Management() {
           ref={mapRef}
         />
       </div>
-      <div className={ManagementStyle.LocationListContainer}>
-        <LocationList
-          onClick={async (e) => {
-            await setInputState(e.currentTarget.className);
-          }}
-        />
-      </div>
       <div className={ManagementStyle.LocationNewContainerNew}>
-        {/* <button onClick={fetchDataNew}>fetchDataNew</button> */}
-        <div className={ManagementStyle.LocationNewContainerNewHight}>
-          <Dropdown
-            className={ManagementStyle.LocationListDrop}
-            overlay={<Menu onClick={handleMenuClick}>{dataTableLocation}</Menu>}
-            trigger={["click"]}
-          >
-            <Typography.Link>
-              <Space>
-                {selectedLocation ? selectedLocation : "Select location"}
-                <DownOutlined />
-              </Space>
-            </Typography.Link>
-          </Dropdown>
-          <Input
-            className={ManagementStyle.LocationInput}
-            onChange={handleChangeMonth}
-            placeholder="Month"
-            maxLength={16}
-          />
-          <Input
-            className={ManagementStyle.LocationInput}
-            onChange={handleChangeYear}
-            placeholder="Year"
-            maxLength={16}
-          />
-
-          <button
-            className={ManagementStyle.LocationInputButton}
-            onClick={fetchDataNew}
-          >
-            Get data
-          </button>
-        </div>
         <div className={ManagementStyle.LocationInpuError}>
           {notificationVisible ? (
             <Alert
@@ -303,12 +262,7 @@ export default function Management() {
             <></>
           )}
         </div>
-        <Table
-          className={ManagementStyle.LocationListTable}
-          columns={columns}
-          dataSource={dataTableNew}
-          bordered
-        />
+
       </div>
       <ModalBox
         data={dataTable}

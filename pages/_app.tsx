@@ -10,9 +10,12 @@ import {
   DesktopOutlined,
   PieChartOutlined,
   AntCloudOutlined,
+  BarChartOutlined,
 } from "@ant-design/icons";
 
 import Management from "./Management";
+import Data from "./Data";
+
 import TestAPI from "./TestAPI";
 import type { MenuProps } from "antd";
 import "./_app.scss";
@@ -44,7 +47,6 @@ function App() {
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
-      
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
@@ -77,8 +79,8 @@ function App() {
                 </div>
               ),
               onClick: () => {
-                if (pageRoute === "TestAPI") {
-                  setPageRoute("Management");
+                if (pageRoute !== "TestAPI") {
+                  setPageRoute("TestAPI");
                 }
               },
             },
@@ -86,6 +88,7 @@ function App() {
               key: "2",
               label: (
                 <div>
+                  
                   <PieChartOutlined
                     style={{
                       marginRight: "30px",
@@ -95,19 +98,42 @@ function App() {
                 </div>
               ),
               onClick: () => {
-                if (pageRoute === "Management") {
-                  setPageRoute("TestAPI");
+                if (pageRoute !== "Management") {
+                  setPageRoute("Management");
+                }
+              },
+            },
+            {
+              key: "3",
+              label: (
+                <div>
+                  
+                  <BarChartOutlined
+                    style={{
+                      marginRight: "30px",
+                    }}
+                  />
+                  Data
+                </div>
+              ),
+              onClick: () => {
+                if (pageRoute !== "Data") {
+                  setPageRoute("Data");
                 }
               },
             },
           ]}
-          defaultSelectedKeys={pageRoute === "Management" ? ["1"] : ["2"]}
+          defaultSelectedKeys={["2"]}
         />
       </Sider>
       <Layout>
         <Header style={{ padding: 0, background: colorBgContainer }}>
           <div className="page-name-high">
-            {pageRoute === "Management" ? " TestAPI" : "Management"}
+            {pageRoute === "Management"
+              ? "Management"
+              : pageRoute === "Data"
+              ? "Data"
+              : "TestAPI"}
           </div>
         </Header>
         <Content style={{ margin: "0 16px" }}>
@@ -120,7 +146,13 @@ function App() {
             }}
           >
             <div style={{ height: "100%" }}>
-              {pageRoute === "Management" ? <TestAPI /> : <Management />}
+              {pageRoute === "Management" ? (
+                <Management />
+              ) : pageRoute === "Data" ? (
+                <Data />
+              ) : (
+                <TestAPI />
+              )}
             </div>
           </div>
         </Content>
